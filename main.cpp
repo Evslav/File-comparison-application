@@ -29,7 +29,7 @@ int main(){
    // cout << FileInfo[0].size << endl;
 
     int q = 0;
-    QDirIterator it("/home/evslav/Documents/Pictures/", QDirIterator::Subdirectories);
+    QDirIterator it("/home/evslav/Documents/Pictu", QDirIterator::Subdirectories);
     while (it.hasNext()) {
         QFileInfo i = it.next();
         QString fileName = it.fileName();
