@@ -4,17 +4,20 @@
 #include <QSetIterator>
 #include <list>
 #include <string>
+#include <thread>
 
-//#include <QString>
-//#include <QTextStream>
-//QTextStream cout(stdout);
-//QTextStream cin(stdin);
-#include <iostream>
+
+#include <QString>
+#include <QTextStream>
+QTextStream cout(stdout);
+QTextStream cin(stdin);
+//#include <iostream>
 #include <fstream>
 #include <cstring>
 
 #include <filecollector.h>
 
+#include <ctime>
 
 using namespace std;
 
@@ -35,7 +38,7 @@ void comparison(string path1, string path2){
         }
         if (result){
         //    cout << "Equal" << endl;
-            cout << path1 << "\t\t" << path2 << endl;
+            cout << path1.c_str() << "\t\t" << path2.c_str() << endl;
         }
         //else
         //    cout << "Unequal" << endl;
@@ -44,13 +47,40 @@ void comparison(string path1, string path2){
         cout << "Error opening file!" << endl;
 }
 
+void threadFunction(FileCollector &f, string str)
+{
+     f.collects(str);
+}
 
 int main(){
+setlocale(LC_CTYPE, "rus");
 
-    string s1 = "/home/evslav/Documents/Pictures/";
-    string s2 = "/home/evslav/Documents/Pictures/";
+    string s1 = "C:\\Program Files";
+    string s2 = "C:\\Program Files";
+    unsigned int start_time =  clock();
     FileCollector f1(s1);
+        cout << f1.sizeFileList() << endl;
     FileCollector f2(s2);
+        cout << f2.sizeFileList() << endl;
+    unsigned int end_time = clock(); // конечное время
+    unsigned int search_time = end_time - start_time; // искомое время
+    cout << search_time << endl;
+
+    FileCollector f3;
+    FileCollector f4;
+    start_time =  clock();
+        std::thread thr(threadFunction, std::ref(f3), s1);
+        std::thread thr2(threadFunction, std::ref(f4), s2);
+
+        thr.join();
+        cout << f1.sizeFileList() << endl;
+        thr2.join();
+        cout << f2.sizeFileList() << endl;
+
+        end_time = clock();
+        search_time = end_time - start_time;
+        cout << search_time << endl;
+
     //cout << f1.setFilePath(2) << " " << f1.setFileSize(2) << endl;
     bool Substring = false;
     if (strstr (s1.c_str(), s2.c_str()) != NULL || strstr (s2.c_str(), s1.c_str()) != NULL)
@@ -64,6 +94,7 @@ int main(){
             for(int j = 0; j < f2.sizeFileList(); j++){
                 if (f1.setFileSize(i) == f2.setFileSize(j)){
                     comparison(f1.setFilePath(i),f2.setFilePath(j));
+                    //cout << f1.setFileSize(i) <<"\t"<< f2.setFileSize(j) << endl;
                 }
             }
         }
@@ -73,6 +104,7 @@ int main(){
             for(int j = 0; j < f2.sizeFileList(); j++){
                 if (f1.setFileSize(i) == f2.setFileSize(j) && f1.setFilePath(i)!= f1.setFilePath(j)){
                     comparison(f1.setFilePath(i),f2.setFilePath(j));
+                    //cout << f1.setFileSize(i) <<"\t"<< f2.setFileSize(j) << endl;
                 }
             }
         }

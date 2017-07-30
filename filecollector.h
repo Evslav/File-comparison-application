@@ -33,6 +33,15 @@ public:
         collect(qstr);
     }
 
+    FileCollector(){
+
+    }
+
+    void collects(std::string str){
+        QString qstr = str.c_str();
+        collect(qstr);
+    }
+
     QList<fInfo> FileIfoList(){
         return FileInfoList;
     }
